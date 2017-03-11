@@ -36,11 +36,10 @@ describe('Server', function() {
   describe('authorize()', function() {
     it('should call `handle`', function() {
       var model = {
-        getAccessToken: function() {},
         getClient: function() {},
         saveAuthorizationCode: function() {}
       };
-      var server = new Server({ model: model });
+      var server = new Server({ model: model, authenticateHandler: function() {} });
 
       sinon.stub(AuthorizeHandler.prototype, 'handle').returns(Promise.resolve());
 

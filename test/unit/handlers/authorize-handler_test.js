@@ -20,11 +20,10 @@ describe('AuthorizeHandler', function() {
     it('should call `model.generateAuthorizationCode()`', function() {
       var model = {
         generateAuthorizationCode: sinon.stub().returns({}),
-        getAccessToken: function() {},
         getClient: function() {},
         saveAuthorizationCode: function() {}
       };
-      var handler = new AuthorizeHandler({ authorizationCodeLifetime: 120, model: model });
+      var handler = new AuthorizeHandler({ authenticateHandler: function() {}, authorizationCodeLifetime: 120, model: model });
 
       return handler.generateAuthorizationCode()
         .then(function() {
@@ -37,11 +36,10 @@ describe('AuthorizeHandler', function() {
   describe('getClient()', function() {
     it('should call `model.getClient()`', function() {
       var model = {
-        getAccessToken: function() {},
         getClient: sinon.stub().returns({ grants: ['authorization_code'], redirectUris: ['http://example.com/cb'] }),
         saveAuthorizationCode: function() {}
       };
-      var handler = new AuthorizeHandler({ authorizationCodeLifetime: 120, model: model });
+      var handler = new AuthorizeHandler({ authenticateHandler: function() {}, authorizationCodeLifetime: 120, model: model });
       var request = new Request({ body: { client_id: 12345, client_secret: 'secret' }, headers: {}, method: {}, query: {} });
 
       return handler.getClient(request)
@@ -55,8 +53,8 @@ describe('AuthorizeHandler', function() {
   });
 
   describe('getUser()', function() {
-    it('should call `authenticateHandler.getUser()`', function() {
-      var authenticateHandler = { handle: sinon.stub().returns(Promise.resolve({})) };
+    it('should call `authenticateHandler()`', function() {
+      var authenticateHandler = sinon.stub().returns(Promise.resolve({}));
       var model = {
         getClient: function() {},
         saveAuthorizationCode: function() {}
@@ -67,10 +65,10 @@ describe('AuthorizeHandler', function() {
 
       return handler.getUser(request, response)
         .then(function() {
-          authenticateHandler.handle.callCount.should.equal(1);
-          authenticateHandler.handle.firstCall.args.should.have.length(2);
-          authenticateHandler.handle.firstCall.args[0].should.equal(request);
-          authenticateHandler.handle.firstCall.args[1].should.equal(response);
+          authenticateHandler.callCount.should.equal(1);
+          authenticateHandler.firstCall.args.should.have.length(2);
+          authenticateHandler.firstCall.args[0].should.equal(request);
+          authenticateHandler.firstCall.args[1].should.equal(response);
         })
         .catch(should.fail);
     });
@@ -79,11 +77,10 @@ describe('AuthorizeHandler', function() {
   describe('saveAuthorizationCode()', function() {
     it('should call `model.saveAuthorizationCode()`', function() {
       var model = {
-        getAccessToken: function() {},
         getClient: function() {},
         saveAuthorizationCode: sinon.stub().returns({})
       };
-      var handler = new AuthorizeHandler({ authorizationCodeLifetime: 120, model: model });
+      var handler = new AuthorizeHandler({ authenticateHandler: function() {}, authorizationCodeLifetime: 120, model: model });
 
       return handler.saveAuthorizationCode('foo', 'bar', 'qux', 'biz', 'baz', 'boz')
         .then(function() {

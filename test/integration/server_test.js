@@ -87,9 +87,6 @@ describe('Server integration', function() {
   describe('authorize()', function() {
     it('should set the default `options`', function() {
       var model = {
-        getAccessToken: function() {
-          return { user: {} };
-        },
         getClient: function() {
           return { grants: ['authorization_code'], redirectUris: ['http://example.com/cb'] };
         },
@@ -97,7 +94,8 @@ describe('Server integration', function() {
           return { authorizationCode: 123 };
         }
       };
-      var server = new Server({ model: model });
+      var authenticateHandler = function() { return {}; };
+      var server = new Server({ model: model, authenticateHandler: authenticateHandler });
       var request = new Request({ body: { client_id: 1234, client_secret: 'secret', response_type: 'code' }, headers: { 'Authorization': 'Bearer foo' }, method: {}, query: { state: 'foobar' } });
       var response = new Response({ body: {}, headers: {} });
 
@@ -111,9 +109,6 @@ describe('Server integration', function() {
 
     it('should return a promise', function() {
       var model = {
-        getAccessToken: function() {
-          return { user: {} };
-        },
         getClient: function() {
           return { grants: ['authorization_code'], redirectUris: ['http://example.com/cb'] };
         },
@@ -121,7 +116,8 @@ describe('Server integration', function() {
           return { authorizationCode: 123 };
         }
       };
-      var server = new Server({ model: model });
+      var authenticateHandler = function() { return {}; };
+      var server = new Server({ model: model, authenticateHandler: authenticateHandler });
       var request = new Request({ body: { client_id: 1234, client_secret: 'secret', response_type: 'code' }, headers: { 'Authorization': 'Bearer foo' }, method: {}, query: { state: 'foobar' } });
       var response = new Response({ body: {}, headers: {} });
       var handler = server.authorize(request, response);
@@ -131,9 +127,6 @@ describe('Server integration', function() {
 
     it('should support callbacks', function(next) {
       var model = {
-        getAccessToken: function() {
-          return { user: {} };
-        },
         getClient: function() {
           return { grants: ['authorization_code'], redirectUris: ['http://example.com/cb'] };
         },
@@ -141,7 +134,8 @@ describe('Server integration', function() {
           return { authorizationCode: 123 };
         }
       };
-      var server = new Server({ model: model });
+      var authenticateHandler = function() { return {}; };
+      var server = new Server({ model: model, authenticateHandler: authenticateHandler });
       var request = new Request({ body: { client_id: 1234, client_secret: 'secret', response_type: 'code' }, headers: { 'Authorization': 'Bearer foo' }, method: {}, query: { state: 'foobar' } });
       var response = new Response({ body: {}, headers: {} });
 
