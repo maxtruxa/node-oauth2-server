@@ -609,8 +609,8 @@ describe('AuthorizeHandler integration', function() {
       return handler.getClient(request)
         .then(should.fail)
         .catch(function(e) {
-          e.should.be.an.instanceOf(InvalidClientError);
-          e.message.should.equal('Invalid client: missing client `grants`');
+          e.should.be.an.instanceOf(ServerError);
+          e.message.should.equal('Server error: missing client `grants`');
         });
     });
 
@@ -645,8 +645,8 @@ describe('AuthorizeHandler integration', function() {
       return handler.getClient(request)
         .then(should.fail)
         .catch(function(e) {
-          e.should.be.an.instanceOf(InvalidClientError);
-          e.message.should.equal('Invalid client: missing client `redirectUri`');
+          e.should.be.an.instanceOf(ServerError);
+          e.message.should.equal('Server error: missing client `redirectUri`');
         });
     });
 
