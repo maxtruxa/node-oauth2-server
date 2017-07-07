@@ -78,7 +78,7 @@ When wrapping an exception, the ``message`` property is automatically copied fro
 ::
 
   const anotherError = new Error('test');
-  const err = new OAuthError(e);
+  const err = new OAuthError(anotherError);
   // err.message === 'test'
   // err.code === 500
   // err.name === 'OAuthError'
